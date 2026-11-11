@@ -1,3 +1,51 @@
+# redundancy_cells: fork for relFlooNoC
+
+This is a fork of [pulp-platform/redundancy_cells](https://github.com/pulp-platform/redundancy_cells).
+It holds the version of the redundancy cells used by **relFlooNoC**, a soft-error-tolerant FlooNoC:
+[RongGi/FlooNoC_Error_Tolerant](https://github.com/RongGi/FlooNoC_Error_Tolerant).
+
+For anything else, use the upstream repository.
+
+## Branches
+
+| Branch | Content |
+|---|---|
+| `master` | Upstream `master` as it was when the fork was made, plus this note. Not used by relFlooNoC. |
+| `relfloonoc` | Upstream commit `3c7c57e` (August 2025) plus one commit with the changes relFlooNoC needs. FlooNoC_Error_Tolerant uses commit `6553e82` of this branch. |
+
+## Why a fork
+
+relFlooNoC needs a few changes that are not in upstream.
+Upstream has also changed some interfaces since `3c7c57e` (`rel_spill_register`: `fault_o` became `err_o`, and `DataCorrector` now means an internal corrector; `rel_fifo`: wider `usage_o`), so relFlooNoC cannot use upstream `master` directly.
+The fork keeps exactly the version relFlooNoC was developed and evaluated with.
+
+## Changes on `relfloonoc`
+
+| File | Change | Type |
+|---|---|---|
+| `rtl/rel_spill_register.sv` | A copy of the `a_full`/`b_full` flags that disagrees with the vote is reloaded with the voted value. Before, a flipped copy stayed wrong until the next fill or drain. | Bug fix |
+| `rtl/rel_rr_arb_tree.sv` | Works with a 1-bit `DataType` (`logic`); upstream bit-selects a scalar there. | Bug fix |
+| `rtl/hsiao_ecc/hsiao_ecc_pkg.sv` | New function `max_data()`: largest data width for a given number of check bits. | Extension |
+| `rtl/hsiao_ecc/hsiao_ecc_enc.sv` | New output `codes` with the check bits only. | Extension |
+| `rtl/hsiao_ecc/hsiao_ecc_cor.sv` | Synthesis attributes `no_ungroup` and `no_boundary_optimization`. | Extension |
+| `rtl/rel_rr_arb_tree.sv`, `rtl/rel_fifo.sv`, `rtl/ecc_wrap/ecc_sram.sv` | common_cells v2 names: `lzc` → `cc_lzc`, `cf_math_pkg` → `cc_pkg`. | Compatibility |
+| `Bender.yml` | common_cells `2.0.0-beta.3` (as FlooNoC) instead of `1.35.0`. | Compatibility |
+
+All incompatibilities and bugs are still present in upstream `master` (checked November 2026).
+
+## Usage with Bender
+
+```yaml
+redundancy_cells: { git: "https://github.com/RongGi/redundancy_cells.git", rev: 6553e82bed04933b132dec18d9d20ac432810cb3 }
+```
+
+## Reference
+
+Rong Gi Ye, *relFlooNoC: A Low-cost Soft-Error-Tolerant NoC with Hybrid Protection*, Semester Thesis, Integrated Systems Laboratory, ETH Zurich, 2026.
+Code: [RongGi/FlooNoC_Error_Tolerant](https://github.com/RongGi/FlooNoC_Error_Tolerant) (tag `thesis-2026`).
+
+The original README of redundancy_cells follows below:
+
 # Redundancy Cells
 
 This repository contains various modules used to add redundancy.
