@@ -143,11 +143,15 @@ module rel_rr_arb_tree #(
     assign tmr_errors = '0;
   // non-degenerate cases
   end else begin : gen_arbiter
+  
+    localparam int unsigned DataBits = $bits(DataType);
+    typedef logic [DataBits-1:0] data_vec_t;
+
     logic [2:0][NumIn-1:0] req_in, gnt_out;
     logic [2:0]            req_out, gnt_in;
     idx_t [2:0]            idx_out;
     idx_t [2:0][$bits(DataType)-1:0] idx_data_out;
-    DataType [2**IdxWidth-1:0] data_in;
+    data_vec_t [2**IdxWidth-1:0] data_in;
     always_comb begin
       data_in = '0;
       for (int i = 0; i < NumIn; i++) begin : gen_data_in
@@ -221,7 +225,11 @@ module rel_rr_arb_tree #(
         .majority_o(local_sel),
         .fault_detected_o(local_fault)
       );
-      assign data_o[i] = data_nodes[0];
+      if ($bits(DataType) == 1) begin : gen_scalar_out
+        assign data_o    = data_nodes[0];
+      end else begin : gen_vector_out
+        assign data_o[i] = data_nodes[0];
+      end
       // assign data_o[i] = data_in[local_index][i];
       for (genvar level = 0; unsigned'(level) < NumLevels; level++) begin : gen_levels
         for (genvar l = 0; l < 2**level; l++) begin : gen_level
@@ -557,18 +565,18 @@ module rel_rr_arb_tree_tmr_part #(
         assign lower_mask[i] = (i <= rr_q) ? req_d[i] : 1'b0;
       end
 
-      lzc #(
-        .WIDTH ( NumIn ),
-        .MODE  ( 1'b0  )
+      cc_lzc #(
+        .Width ( NumIn ),
+        .Mode  ( 1'b0  )
       ) i_lzc_upper (
         .in_i    ( upper_mask  ),
         .cnt_o   ( upper_idx   ),
         .empty_o ( upper_empty )
       );
 
-      lzc #(
-        .WIDTH ( NumIn ),
-        .MODE  ( 1'b0  )
+      cc_lzc #(
+        .Width ( NumIn ),
+        .Mode  ( 1'b0  )
       ) i_lzc_lower (
         .in_i    ( lower_mask  ),
         .cnt_o   ( lower_idx   ),

@@ -210,6 +210,8 @@ module rel_spill_reg_tmr_part #(
       a_full_q_sync_o <= '0;
     else if (a_fill || a_drain)
       a_full_q_sync_o <= a_fill;
+    else if (faults_o[0])        
+      a_full_q_sync_o <= a_full_q;
   end
 
   TMR_voter_fail #(
@@ -227,6 +229,8 @@ module rel_spill_reg_tmr_part #(
       b_full_q_sync_o <= '0;
     else if (b_fill || b_drain)
       b_full_q_sync_o <= b_fill;
+    else if (faults_o[1])
+      b_full_q_sync_o <= b_full_q;
   end
 
   TMR_voter_fail #(

@@ -26,7 +26,7 @@ module rel_fifo #(
   /// Use dedicated registers for status_cnt_q (better timing, higher area, likely to be optimized away, currently unimplemented)
   parameter bit          StatusFF    = 1'b0,
   // DO NOT OVERWRITE THESE PARAMETERS
-  parameter int unsigned AddrDepth   = cf_math_pkg::idx_width(Depth),
+  parameter int unsigned AddrDepth   = cc_pkg::idx_width(Depth),
   parameter int unsigned HsWidth     = TmrStatus ? 3 : 1
 )(
   /// Clock

@@ -18,7 +18,8 @@ module hsiao_ecc_enc import hsiao_ecc_pkg::*; #(
   parameter bit          PrintHsiao = 1'b0
 ) (
   input  logic [ DataWidth-1:0] in,
-  output logic [TotalWidth-1:0] out
+  output logic [TotalWidth-1:0] out,
+  output logic [ProtWidth-1:0] codes
 );
 
   if (ProtWidth < min_ecc(DataWidth)) $error("ProtWidth must be greater than $clog2(DataWidth)+2");
@@ -32,6 +33,8 @@ module hsiao_ecc_enc import hsiao_ecc_pkg::*; #(
       out[DataWidth + i] = ^(in & HsiaoCodes[i][DataWidth-1:0]);
     end
   end
+
+  assign codes = out[TotalWidth-1:DataWidth];
 
 `ifndef TARGET_SYNTHESIS
   if (PrintHsiao) begin : gen_print_matrix

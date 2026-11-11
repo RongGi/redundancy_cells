@@ -22,6 +22,10 @@ package hsiao_ecc_pkg;
     // min_ecc = $clog2(data_width)+2;
   endfunction
 
+  function automatic int unsigned max_data(int unsigned ecc_width);
+    return (2**(ecc_width-1)) - ecc_width;
+  endfunction
+  
   /// Static parameters for synthesizability (avoiding dynamic arrays)
   /// Maximum reasonable Data Width
   localparam int unsigned MaxDataWidth = 1024;

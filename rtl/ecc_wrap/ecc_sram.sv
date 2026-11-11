@@ -84,7 +84,7 @@ module ecc_sram #(
   typedef enum logic { NORMAL, READ_MODIFY_WRITE } store_state_e;
   store_state_e store_state_d, store_state_q;
 
-  typedef logic [cf_math_pkg::idx_width(NumRMWCuts)-1:0] rmw_count_t;
+  typedef logic [cc_pkg::idx_width(NumRMWCuts)-1:0] rmw_count_t;
   rmw_count_t rmw_count_d, rmw_count_q;
 
   logic [  DataInWidth-1:0] input_buffer_d, input_buffer_q;
@@ -117,7 +117,7 @@ module ecc_sram #(
     //                  re-calculates ECC and stores correctly
 
     logic [DataInWidth-1:0] to_store;
-    logic [cf_math_pkg::idx_width(NumRMWCuts)-1:0][DataInWidth-1:0] loaded;
+    logic [cc_pkg::idx_width(NumRMWCuts)-1:0][DataInWidth-1:0] loaded;
 
     logic [ProtectedWidth-1:0] decoder_in;
 

@@ -11,6 +11,8 @@
 // Hsiao ECC decoder
 // Based in part on work by lowRISC
 
+(* no_ungroup *)
+(* no_boundary_optimization *)
 module hsiao_ecc_cor import hsiao_ecc_pkg::*; #(
   parameter int unsigned DataWidth = 32,
   parameter int unsigned ProtWidth = min_ecc(DataWidth),
